@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "763a0a44-9443-4758-afe5-dc9e6da4bdf5",
+  "id": "9b591347-e52c-48b3-a6ac-1108e43147d4",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "blogs": {
@@ -12,7 +12,8 @@
           "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": false
+          "autoincrement": false,
+          "default": "'ba09ecb7-c715-4a24-895a-89e6b80184d3'"
         },
         "slug": {
           "name": "slug",
@@ -159,7 +160,8 @@
           "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": false
+          "autoincrement": false,
+          "default": "'dad8aa28-63d5-4742-871b-11c6484c9391'"
         },
         "comment": {
           "name": "comment",
@@ -284,8 +286,16 @@
           "autoincrement": false,
           "default": "''"
         },
-        "gmail_id": {
-          "name": "gmail_id",
+        "github_id": {
+          "name": "github_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "''"
+        },
+        "google_id": {
+          "name": "google_id",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -299,6 +309,13 @@
           "notNull": false,
           "autoincrement": false,
           "default": "''"
+        },
+        "is_verified": {
+          "name": "is_verified",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         },
         "time_stamp": {
           "name": "time_stamp",
@@ -324,15 +341,74 @@
           ],
           "isUnique": true
         },
-        "users_gmail_id_unique": {
-          "name": "users_gmail_id_unique",
+        "users_github_id_unique": {
+          "name": "users_github_id_unique",
           "columns": [
-            "gmail_id"
+            "github_id"
+          ],
+          "isUnique": true
+        },
+        "users_google_id_unique": {
+          "name": "users_google_id_unique",
+          "columns": [
+            "google_id"
           ],
           "isUnique": true
         }
       },
       "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "verification_codes": {
+      "name": "verification_codes",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'190a22bd-1264-459d-834a-97144b18f18e'"
+        },
+        "verification_code": {
+          "name": "verification_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "expire_at": {
+          "name": "expire_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "verification_codes_user_id_users_id_fk": {
+          "name": "verification_codes_user_id_users_id_fk",
+          "tableFrom": "verification_codes",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     }
