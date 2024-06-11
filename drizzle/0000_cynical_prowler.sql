@@ -1,5 +1,25 @@
+CREATE TABLE `email_user` (
+	`email` text PRIMARY KEY NOT NULL,
+	`password` text NOT NULL,
+	`is_verified` integer,
+	`userId` text,
+	FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
+CREATE TABLE `github_user` (
+	`github_id` text PRIMARY KEY NOT NULL,
+	`user_id` text,
+	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
+CREATE TABLE `google_user` (
+	`google_id` text DEFAULT '',
+	`user_id` text,
+	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
 CREATE TABLE `blogs` (
-	`id` text PRIMARY KEY DEFAULT 'ba09ecb7-c715-4a24-895a-89e6b80184d3' NOT NULL,
+	`id` text PRIMARY KEY DEFAULT 'fff31588-8dcb-4537-8723-ca2faeeb248f' NOT NULL,
 	`slug` text,
 	`title` text NOT NULL,
 	`cover_image` text NOT NULL,
@@ -19,7 +39,7 @@ CREATE TABLE `bookmarks` (
 );
 --> statement-breakpoint
 CREATE TABLE `comments` (
-	`id` text PRIMARY KEY DEFAULT 'dad8aa28-63d5-4742-871b-11c6484c9391' NOT NULL,
+	`id` text PRIMARY KEY DEFAULT '029f3bc4-ecf9-4b89-b62e-7600718141af' NOT NULL,
 	`comment` text NOT NULL,
 	`user_id` text,
 	`blog_id` text,
@@ -37,24 +57,17 @@ CREATE TABLE `session` (
 CREATE TABLE `users` (
 	`id` text PRIMARY KEY NOT NULL,
 	`username` text,
-	`email` text DEFAULT '',
-	`github_id` text DEFAULT '',
-	`google_id` text DEFAULT '',
-	`password` text DEFAULT '',
-	`is_verified` integer,
 	`time_stamp` text DEFAULT (current_timestamp) NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `verification_codes` (
-	`id` text PRIMARY KEY DEFAULT '190a22bd-1264-459d-834a-97144b18f18e' NOT NULL,
+	`id` text PRIMARY KEY DEFAULT '2f40ebcc-5d38-4d2a-81c7-04e0101a3047' NOT NULL,
 	`verification_code` text NOT NULL,
 	`user_id` text,
 	`expire_at` text NOT NULL,
 	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
+CREATE UNIQUE INDEX `google_user_google_id_unique` ON `google_user` (`google_id`);--> statement-breakpoint
 CREATE UNIQUE INDEX `blogs_slug_unique` ON `blogs` (`slug`);--> statement-breakpoint
-CREATE UNIQUE INDEX `users_username_unique` ON `users` (`username`);--> statement-breakpoint
-CREATE UNIQUE INDEX `users_email_unique` ON `users` (`email`);--> statement-breakpoint
-CREATE UNIQUE INDEX `users_github_id_unique` ON `users` (`github_id`);--> statement-breakpoint
-CREATE UNIQUE INDEX `users_google_id_unique` ON `users` (`google_id`);
+CREATE UNIQUE INDEX `users_username_unique` ON `users` (`username`);

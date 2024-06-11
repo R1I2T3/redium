@@ -1,7 +1,11 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { userTable, verificationTable } from "@/lib/db/schema";
+import {
+  EmailPasswordTable,
+  userTable,
+  verificationTable,
+} from "@/lib/db/schema";
 import { LoginType, signUpSchema, signupType } from "@/lib/schema.ts";
 import { eq } from "drizzle-orm";
 import { generateIdFromEntropySize } from "lucia";
@@ -29,15 +33,16 @@ export const signupAction = async (data: signupType) => {
       .insert(userTable)
       .values({
         id: userId,
-        email: data.email,
         username: data.username,
-        password: hashedPassword,
       })
-      .returning({ username: userTable.username, email: userTable.email })
+      .returning({ username: userTable.username })
   )[0];
+  await db
+    .insert(EmailPasswordTable)
+    .values({ password: hashedPassword, email: data.email, userId });
   await SendVerificationCode({
     id: userId,
-    email: newUser.email!,
+    email: data.email!,
     username: newUser.username!,
     purpose: "verification code for verifying account",
   });
@@ -66,9 +71,9 @@ export const verifyAccountAction = async (code: string, username: string) => {
     .delete(verificationTable)
     .where(eq(verificationTable.id, userCode.id));
   await db
-    .update(userTable)
+    .update(EmailPasswordTable)
     .set({ isVerified: true })
-    .where(eq(userTable.id, currentUser.id));
+    .where(eq(EmailPasswordTable.userId, currentUser.id));
   const session = await lucia.createSession(currentUser.id, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
   cookies().set(
@@ -81,33 +86,40 @@ export const verifyAccountAction = async (code: string, username: string) => {
 
 export const LoginAction = async (data: LoginType) => {
   const currentUser = (
-    await db.select().from(userTable).where(eq(userTable.email, data.email))
+    await db
+      .select()
+      .from(EmailPasswordTable)
+      .where(eq(EmailPasswordTable.email, data.email))
+      .innerJoin(userTable, eq(userTable.id, EmailPasswordTable.userId))
   )[0];
   if (!currentUser) {
     return { error: "Invalid credentials" };
   }
   const isPasswordCorrect = await scrypt.verify(
-    currentUser.password!,
+    currentUser.email_user.password!,
     data.password
   );
   if (!isPasswordCorrect) {
     return { error: "Invalid credentials" };
   }
-  if (!currentUser.isVerified) {
+  if (!currentUser.email_user.isVerified) {
     await db
       .delete(verificationTable)
-      .where(eq(verificationTable.userId, currentUser.id));
+      .where(eq(verificationTable.userId, currentUser.email_user.userId!));
     await SendVerificationCode({
-      id: currentUser.id,
-      email: currentUser.email!,
-      username: currentUser.username!,
+      id: currentUser.email_user.userId!,
+      email: currentUser.email_user.email!,
+      username: currentUser.users.username!,
       purpose: "verification code for verifying account",
     });
     return redirect(
-      `/auth/verifyaccount?username=${currentUser.username?.replace(" ", "+")}`
+      `/auth/verifyaccount?username=${currentUser.users.username?.replace(
+        " ",
+        "+"
+      )}`
     );
   }
-  const session = await lucia.createSession(currentUser.id, {});
+  const session = await lucia.createSession(currentUser.email_user.userId!, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
   cookies().set(
     sessionCookie.name,

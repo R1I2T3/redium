@@ -1,9 +1,143 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "9b591347-e52c-48b3-a6ac-1108e43147d4",
+  "id": "da333eb6-c1df-485b-ade2-3e91b1b0ae40",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
+    "email_user": {
+      "name": "email_user",
+      "columns": {
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "password": {
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "is_verified": {
+          "name": "is_verified",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "userId": {
+          "name": "userId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "email_user_userId_users_id_fk": {
+          "name": "email_user_userId_users_id_fk",
+          "tableFrom": "email_user",
+          "tableTo": "users",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "github_user": {
+      "name": "github_user",
+      "columns": {
+        "github_id": {
+          "name": "github_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "github_user_user_id_users_id_fk": {
+          "name": "github_user_user_id_users_id_fk",
+          "tableFrom": "github_user",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "google_user": {
+      "name": "google_user",
+      "columns": {
+        "google_id": {
+          "name": "google_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "''"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "google_user_google_id_unique": {
+          "name": "google_user_google_id_unique",
+          "columns": [
+            "google_id"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "google_user_user_id_users_id_fk": {
+          "name": "google_user_user_id_users_id_fk",
+          "tableFrom": "google_user",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "blogs": {
       "name": "blogs",
       "columns": {
@@ -13,7 +147,7 @@
           "primaryKey": true,
           "notNull": true,
           "autoincrement": false,
-          "default": "'ba09ecb7-c715-4a24-895a-89e6b80184d3'"
+          "default": "'fff31588-8dcb-4537-8723-ca2faeeb248f'"
         },
         "slug": {
           "name": "slug",
@@ -161,7 +295,7 @@
           "primaryKey": true,
           "notNull": true,
           "autoincrement": false,
-          "default": "'dad8aa28-63d5-4742-871b-11c6484c9391'"
+          "default": "'029f3bc4-ecf9-4b89-b62e-7600718141af'"
         },
         "comment": {
           "name": "comment",
@@ -278,45 +412,6 @@
           "notNull": false,
           "autoincrement": false
         },
-        "email": {
-          "name": "email",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": "''"
-        },
-        "github_id": {
-          "name": "github_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": "''"
-        },
-        "google_id": {
-          "name": "google_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": "''"
-        },
-        "password": {
-          "name": "password",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": "''"
-        },
-        "is_verified": {
-          "name": "is_verified",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
         "time_stamp": {
           "name": "time_stamp",
           "type": "text",
@@ -331,27 +426,6 @@
           "name": "users_username_unique",
           "columns": [
             "username"
-          ],
-          "isUnique": true
-        },
-        "users_email_unique": {
-          "name": "users_email_unique",
-          "columns": [
-            "email"
-          ],
-          "isUnique": true
-        },
-        "users_github_id_unique": {
-          "name": "users_github_id_unique",
-          "columns": [
-            "github_id"
-          ],
-          "isUnique": true
-        },
-        "users_google_id_unique": {
-          "name": "users_google_id_unique",
-          "columns": [
-            "google_id"
           ],
           "isUnique": true
         }
@@ -369,7 +443,7 @@
           "primaryKey": true,
           "notNull": true,
           "autoincrement": false,
-          "default": "'190a22bd-1264-459d-834a-97144b18f18e'"
+          "default": "'2f40ebcc-5d38-4d2a-81c7-04e0101a3047'"
         },
         "verification_code": {
           "name": "verification_code",
