@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { userTable, verificationTable } from "@/lib/db/schema";
-import { signUpSchema, signupType } from "@/lib/schema.ts";
+import { LoginType, signUpSchema, signupType } from "@/lib/schema.ts";
 import { eq } from "drizzle-orm";
 import { scrypt } from "@/lib/auth/utils";
 import { generateIdFromEntropySize } from "lucia";
@@ -65,6 +65,10 @@ export const verifyAccountAction = async (code: string, username: string) => {
   await db
     .delete(verificationTable)
     .where(eq(verificationTable.id, userCode.id));
+  await db
+    .update(userTable)
+    .set({ isVerified: true })
+    .where(eq(userTable.id, currentUser.id));
   const session = await lucia.createSession(currentUser.id, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
   cookies().set(
@@ -74,3 +78,5 @@ export const verifyAccountAction = async (code: string, username: string) => {
   );
   return redirect("/");
 };
+
+export const LoginAction = async (data: LoginType) => {};

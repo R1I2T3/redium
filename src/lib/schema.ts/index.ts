@@ -15,3 +15,10 @@ export const verificationCodeSchema = z.object({
 });
 
 export type verificationCodeType = z.infer<typeof verificationCodeSchema>;
+
+export const LoginSchema = z.object({
+  email: z.string().min(1),
+  password: z.string().min(6, "wrong hashedPassword"),
+});
+
+export type LoginType = z.infer<typeof LoginSchema>;

@@ -56,8 +56,16 @@ const VerificationCodeForm = ({ username }: verificationCodeFormProps) => {
       {errors.code && (
         <span className="text-md text-red-600">{errors.code.message}</span>
       )}
-      <button className="bg-primary p-2 rounded-lg" type="submit">
-        Submit
+      <button
+        className="bg-primary p-2 rounded-lg"
+        type="submit"
+        disabled={pending}
+      >
+        {pending ? (
+          <span className="loading loading-spinner"></span>
+        ) : (
+          "Verify account"
+        )}
       </button>
     </form>
   );
