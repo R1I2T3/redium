@@ -4,12 +4,12 @@ import { db } from "@/lib/db";
 import { userTable, verificationTable } from "@/lib/db/schema";
 import { LoginType, signUpSchema, signupType } from "@/lib/schema.ts";
 import { eq } from "drizzle-orm";
-import { scrypt } from "@/lib/auth/utils";
 import { generateIdFromEntropySize } from "lucia";
 import { redirect } from "next/navigation";
 import { SendVerificationCode } from "@/lib/mail/sendVerificationToken";
 import { lucia } from "@/lib/auth";
 import { cookies } from "next/headers";
+import { scrypt } from "@/lib/auth/utils";
 export const signupAction = async (data: signupType) => {
   const parsedData = signUpSchema.safeParse(data);
   if (parsedData.error) {
@@ -79,4 +79,40 @@ export const verifyAccountAction = async (code: string, username: string) => {
   return redirect("/");
 };
 
-export const LoginAction = async (data: LoginType) => {};
+export const LoginAction = async (data: LoginType) => {
+  const currentUser = (
+    await db.select().from(userTable).where(eq(userTable.email, data.email))
+  )[0];
+  if (!currentUser) {
+    return { error: "Invalid credentials" };
+  }
+  const isPasswordCorrect = await scrypt.verify(
+    currentUser.password!,
+    data.password
+  );
+  if (!isPasswordCorrect) {
+    return { error: "Invalid credentials" };
+  }
+  if (!currentUser.isVerified) {
+    await db
+      .delete(verificationTable)
+      .where(eq(verificationTable.userId, currentUser.id));
+    await SendVerificationCode({
+      id: currentUser.id,
+      email: currentUser.email!,
+      username: currentUser.username!,
+      purpose: "verification code for verifying account",
+    });
+    return redirect(
+      `/auth/verifyaccount?username=${currentUser.username?.replace(" ", "+")}`
+    );
+  }
+  const session = await lucia.createSession(currentUser.id, {});
+  const sessionCookie = lucia.createSessionCookie(session.id);
+  cookies().set(
+    sessionCookie.name,
+    sessionCookie.value,
+    sessionCookie.attributes
+  );
+  return redirect("/");
+};
