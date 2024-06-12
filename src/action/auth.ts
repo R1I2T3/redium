@@ -7,13 +7,15 @@ import {
   verificationTable,
 } from "@/lib/db/schema";
 import { LoginType, signUpSchema, signupType } from "@/lib/schema.ts";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { generateIdFromEntropySize } from "lucia";
 import { redirect } from "next/navigation";
 import { SendVerificationCode } from "@/lib/mail/sendVerificationToken";
 import { lucia } from "@/lib/auth";
 import { cookies } from "next/headers";
 import { scrypt } from "@/lib/auth/utils";
+import { env } from "@/env";
+
 export const signupAction = async (data: signupType) => {
   const parsedData = signUpSchema.safeParse(data);
   if (parsedData.error) {
@@ -43,6 +45,7 @@ export const signupAction = async (data: signupType) => {
   await SendVerificationCode({
     id: userId,
     email: data.email!,
+    db_purpose: "verify_account",
     username: newUser.username!,
     purpose: "verification code for verifying account",
   });
@@ -111,6 +114,7 @@ export const LoginAction = async (data: LoginType) => {
       email: currentUser.email_user.email!,
       username: currentUser.users.username!,
       purpose: "verification code for verifying account",
+      db_purpose: "verify_account",
     });
     return redirect(
       `/auth/verifyaccount?username=${currentUser.users.username?.replace(
@@ -127,4 +131,98 @@ export const LoginAction = async (data: LoginType) => {
     sessionCookie.attributes
   );
   return redirect("/");
+};
+
+export const SendForgotPasswordEmailAction = async (email: string) => {
+  const isUserPresent = (
+    await db
+      .select()
+      .from(EmailPasswordTable)
+      .where(eq(EmailPasswordTable.email, email))
+      .innerJoin(userTable, eq(userTable.id, EmailPasswordTable.userId))
+  )[0];
+  if (!isUserPresent) {
+    return { error: "Account not found" };
+  }
+  await SendVerificationCode({
+    id: isUserPresent.users.id,
+    username: isUserPresent.users.username!,
+    email: isUserPresent.email_user.email,
+    purpose: "your otp for forgot password",
+    db_purpose: "forgot_password",
+  });
+  return redirect(
+    `/auth/forgot-password/verifyotp?username=${isUserPresent.users.username?.replaceAll(
+      " ",
+      "+"
+    )}`
+  );
+};
+
+export const VerifyForgotPasswordAction = async (
+  code: string,
+  username: string
+) => {
+  const currentUserOtp = (
+    await db
+      .select()
+      .from(userTable)
+      .where(eq(userTable.username, username))
+      .innerJoin(
+        verificationTable,
+        and(
+          eq(verificationTable.purpose, "forgot_password"),
+          eq(verificationTable.userId, userTable.id)
+        )
+      )
+  )[0];
+  if (!currentUserOtp) {
+    return { error: "User not found" };
+  }
+  if (currentUserOtp.verification_codes.verificationCode !== code) {
+    return { error: "Please Provide correct code" };
+  }
+  const forgot_password_cookie = { username, userId: currentUserOtp.users.id };
+  cookies().set(
+    "forgot_password_cookie",
+    JSON.stringify(forgot_password_cookie),
+    {
+      secure: env.NODE_ENV === "production",
+      path: "/",
+      httpOnly: true,
+      maxAge: 60 * 10, // 10 min
+    }
+  );
+  await db
+    .delete(verificationTable)
+    .where(
+      and(
+        eq(verificationTable.userId, currentUserOtp.users.id),
+        eq(verificationTable.purpose, "forgot_password")
+      )
+    );
+  return redirect("/auth/forgot-password/new_password");
+};
+
+export const CreateNewPasswordAction = async (newPassword: string) => {
+  const forgot_password_cookie = cookies().get("forgot_password_cookie");
+  if (!forgot_password_cookie) {
+    return { error: "You are not authorized for this task" };
+  }
+  const cookieDetails = JSON.parse(forgot_password_cookie.value);
+  const EmailUser = (
+    await db
+      .select()
+      .from(EmailPasswordTable)
+      .where(eq(EmailPasswordTable.userId, cookieDetails.userId))
+  )[0];
+  if (!EmailUser) {
+    return { error: "Invalid cookie" };
+  }
+  const newHashedPassword = await scrypt.hash(newPassword);
+  await db
+    .update(EmailPasswordTable)
+    .set({ password: newHashedPassword })
+    .where(eq(EmailPasswordTable.userId, EmailUser.userId!));
+  return redirect("/auth/login");
 };

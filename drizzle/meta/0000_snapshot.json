@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "da333eb6-c1df-485b-ade2-3e91b1b0ae40",
+  "id": "acb0c374-6d7d-41b0-822c-8009db534818",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "email_user": {
@@ -147,7 +147,7 @@
           "primaryKey": true,
           "notNull": true,
           "autoincrement": false,
-          "default": "'fff31588-8dcb-4537-8723-ca2faeeb248f'"
+          "default": "'5bc425dd-e255-4e86-9478-23d94e943a2f'"
         },
         "slug": {
           "name": "slug",
@@ -295,7 +295,7 @@
           "primaryKey": true,
           "notNull": true,
           "autoincrement": false,
-          "default": "'029f3bc4-ecf9-4b89-b62e-7600718141af'"
+          "default": "'b0424f24-d414-46bf-809c-60ddbc0c10b5'"
         },
         "comment": {
           "name": "comment",
@@ -443,7 +443,7 @@
           "primaryKey": true,
           "notNull": true,
           "autoincrement": false,
-          "default": "'2f40ebcc-5d38-4d2a-81c7-04e0101a3047'"
+          "default": "'39931813-423b-46fc-abc5-0690e9cb37ba'"
         },
         "verification_code": {
           "name": "verification_code",
@@ -457,6 +457,13 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false,
+          "autoincrement": false
+        },
+        "purpose": {
+          "name": "purpose",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
           "autoincrement": false
         },
         "expire_at": {

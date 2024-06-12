@@ -36,6 +36,7 @@ export const verificationTable = sqliteTable("verification_codes", {
   id: text("id").primaryKey().default(uuid()),
   verificationCode: text("verification_code").notNull(),
   userId: text("user_id").references(() => userTable.id),
+  purpose: text("purpose").notNull(),
   expiry: text("expire_at").notNull(),
 });
 

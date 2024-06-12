@@ -9,6 +9,7 @@ interface VerificationParameters {
   id: string;
   email: string;
   username: string;
+  db_purpose: string;
   purpose: string;
 }
 export async function SendVerificationCode({
@@ -16,6 +17,7 @@ export async function SendVerificationCode({
   username,
   email,
   purpose,
+  db_purpose,
 }: VerificationParameters) {
   const otp = (
     Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000
@@ -29,8 +31,6 @@ export async function SendVerificationCode({
       pass: env.EMAIL_PASSWORD,
     },
   });
-  console.log(env.EMAIL_USERNAME);
-
   const emailHtml = render(VerificationEmail({ username, purpose, otp }));
   const info = await transporter.sendMail({
     from: env.EMAIL_USERNAME, // sender address
@@ -38,12 +38,10 @@ export async function SendVerificationCode({
     subject: "Verification Code", // Subject line
     html: emailHtml,
   });
-  await db
-    .insert(verificationTable)
-    .values({
-      verificationCode: otp,
-      userId: id,
-      expiry: new Date(Date.now() + 2 * (60 * 60 * 1000)).toString(),
-    });
-  console.log("Message sent: %s", info.messageId);
+  await db.insert(verificationTable).values({
+    purpose: db_purpose,
+    verificationCode: otp,
+    userId: id,
+    expiry: new Date(Date.now() + 2 * (60 * 60 * 1000)).toString(),
+  });
 }

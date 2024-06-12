@@ -70,7 +70,7 @@ const LoginForm = () => {
       )}
       <div className="flex justify-between text-sm my-2 text-blue-500">
         <Link
-          href={"/auth/forgot_password"}
+          href={"/auth/forgot-password"}
           className="hover:underline underline-offset-4"
         >
           forgot password

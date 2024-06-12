@@ -9,7 +9,7 @@ const AuthHeader = () => {
       </h1>
       <input
         type="checkbox"
-        value={"dracula"}
+        value={"dark"}
         className="toggle theme-controller"
         onChange={(e) => console.log(e.target.value)}
       />
