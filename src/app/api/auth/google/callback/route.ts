@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { OAuth2RequestError } from "arctic";
 import { generateIdFromEntropySize } from "lucia";
 import { db } from "@/lib/db";
-import { userTable } from "@/lib/db/schema";
+import { GoogleUserTable, userTable } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 export async function GET(request: Request): Promise<Response> {
   const url = new URL(request.url);
@@ -27,22 +27,26 @@ export async function GET(request: Request): Promise<Response> {
 
   try {
     const tokens = await google.validateAuthorizationCode(code, code_verifier);
-    const githubUserResponse = await fetch("https://api.google.com/user", {
-      headers: {
-        Authorization: `Bearer ${tokens.accessToken}`,
-      },
-    });
-    const githubUser: GitHubUser = await githubUserResponse.json();
+    const googleResponse = await fetch(
+      `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${tokens.accessToken}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${tokens.accessToken}`,
+        },
+      }
+    );
+    const googleUser: GoogleUser = await googleResponse.json();
 
     const existingUser = (
       await db
         .select()
-        .from(userTable)
-        .where(eq(userTable.github_id, githubUser.id))
+        .from(GoogleUserTable)
+        .where(eq(GoogleUserTable.google_id, googleUser.sub))
     )[0];
 
     if (existingUser) {
-      const session = await lucia.createSession(existingUser.id, {});
+      const session = await lucia.createSession(existingUser.userId!, {});
       const sessionCookie = lucia.createSessionCookie(session.id);
       cookies().set(
         sessionCookie.name,
@@ -59,12 +63,13 @@ export async function GET(request: Request): Promise<Response> {
 
     const userId = generateIdFromEntropySize(10);
     await db.insert(userTable).values({
+      username: googleUser.email.slice(0, googleUser.email.indexOf("@")),
       id: userId,
-      github_id: githubUser.id,
-      username: githubUser.login,
-      isVerified: true,
     });
-
+    await db.insert(GoogleUserTable).values({
+      google_id: googleUser.sub,
+      userId,
+    });
     const session = await lucia.createSession(userId, {});
     const sessionCookie = lucia.createSessionCookie(session.id);
     cookies().set(
@@ -93,7 +98,7 @@ export async function GET(request: Request): Promise<Response> {
   }
 }
 
-interface GitHubUser {
-  id: string;
-  login: string;
+interface GoogleUser {
+  sub: string;
+  email: string;
 }
