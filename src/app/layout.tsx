@@ -1,7 +1,9 @@
-import type { Metadata } from "next";
+"use client";
 import { Inter } from "next/font/google";
 import "./globals.css";
-
+import { useAtomValue } from "jotai";
+import { themeAtom } from "@/lib/atom";
+import { Provider } from "jotai";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({
@@ -9,9 +11,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const theme = useAtomValue(themeAtom);
   return (
-    <html lang="en" data-theme="cupcake">
-      <body className={`${inter.className} `}>{children}</body>
+    <html lang="en" data-theme={theme}>
+      <Provider>
+        <body className={`${inter.className} `}>{children}</body>
+      </Provider>
     </html>
   );
 }

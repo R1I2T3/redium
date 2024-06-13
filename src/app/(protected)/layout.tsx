@@ -1,5 +1,5 @@
 import { validateRequest } from "@/lib/auth/verifyAccount";
-
+import Header from "@/components/protected/Header";
 import { redirect } from "next/navigation";
 export default async function RootLayout({
   children,
@@ -10,5 +10,10 @@ export default async function RootLayout({
   if (!result || result.user === null) {
     redirect("/auth/login");
   }
-  return <main>{children}</main>;
+  return (
+    <>
+      <Header />
+      <main>{children}</main>
+    </>
+  );
 }
