@@ -31,7 +31,11 @@ const Header = () => {
         </Link>
         <button
           className="btn rounded-xl"
-          onClick={() => document.getElementById("my_modal_2")?.showModal()}
+          onClick={() =>
+            (
+              document.getElementById("my_modal_2") as HTMLDialogElement
+            )?.showModal()
+          }
         >
           Logout
         </button>

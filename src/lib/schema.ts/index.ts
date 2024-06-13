@@ -22,3 +22,18 @@ export const LoginSchema = z.object({
 });
 
 export type LoginType = z.infer<typeof LoginSchema>;
+
+const FileSchema = z
+  .custom<File>()
+  .refine(
+    (file) => !file || (file instanceof File && file.type.startsWith("image/")),
+    "File must be image"
+  )
+  .refine((file) => {
+    return !file || file.size < 1024 * 1024 * 2;
+  }, "File must be less than 2 mb");
+export const CreateBlogSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  coverImage: FileSchema,
+  blog: z.string().min(1, "Required"),
+});

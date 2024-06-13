@@ -13,6 +13,7 @@ export const userTable = sqliteTable("users", {
   created_at: text("time_stamp")
     .notNull()
     .default(sql`(current_timestamp)`),
+  profile_pic_url: text("profile_pic").default(""),
 });
 
 export const EmailPasswordTable = sqliteTable("email_user", {
@@ -55,7 +56,6 @@ export const blogTable = sqliteTable("blogs", {
   coverImageUrL: text("cover_image").notNull(),
   blog: text("blog").notNull(),
   creatorId: text("creator_id").references(() => userTable.id),
-  password: text("password").default(""),
   created_at: text("time_stamp")
     .notNull()
     .default(sql`(current_timestamp)`),

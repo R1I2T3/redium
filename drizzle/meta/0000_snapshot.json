@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "acb0c374-6d7d-41b0-822c-8009db534818",
+  "id": "599ab79d-1de9-422d-a17d-566410e0bf48",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "email_user": {
@@ -147,7 +147,7 @@
           "primaryKey": true,
           "notNull": true,
           "autoincrement": false,
-          "default": "'5bc425dd-e255-4e86-9478-23d94e943a2f'"
+          "default": "'583da29e-a912-459e-bbd2-f7e7e3cdf43f'"
         },
         "slug": {
           "name": "slug",
@@ -183,14 +183,6 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
-        },
-        "password": {
-          "name": "password",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": "''"
         },
         "time_stamp": {
           "name": "time_stamp",
@@ -295,7 +287,7 @@
           "primaryKey": true,
           "notNull": true,
           "autoincrement": false,
-          "default": "'b0424f24-d414-46bf-809c-60ddbc0c10b5'"
+          "default": "'831d6779-4f80-473e-bf8d-97f8584d383f'"
         },
         "comment": {
           "name": "comment",
@@ -419,6 +411,14 @@
           "notNull": true,
           "autoincrement": false,
           "default": "(current_timestamp)"
+        },
+        "profile_pic": {
+          "name": "profile_pic",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "''"
         }
       },
       "indexes": {
@@ -443,7 +443,7 @@
           "primaryKey": true,
           "notNull": true,
           "autoincrement": false,
-          "default": "'39931813-423b-46fc-abc5-0690e9cb37ba'"
+          "default": "'660aa397-b29a-43bb-a12a-7c1013e2d0fe'"
         },
         "verification_code": {
           "name": "verification_code",

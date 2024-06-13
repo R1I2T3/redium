@@ -19,13 +19,12 @@ CREATE TABLE `google_user` (
 );
 --> statement-breakpoint
 CREATE TABLE `blogs` (
-	`id` text PRIMARY KEY DEFAULT '5bc425dd-e255-4e86-9478-23d94e943a2f' NOT NULL,
+	`id` text PRIMARY KEY DEFAULT '583da29e-a912-459e-bbd2-f7e7e3cdf43f' NOT NULL,
 	`slug` text,
 	`title` text NOT NULL,
 	`cover_image` text NOT NULL,
 	`blog` text NOT NULL,
 	`creator_id` text,
-	`password` text DEFAULT '',
 	`time_stamp` text DEFAULT (current_timestamp) NOT NULL,
 	FOREIGN KEY (`creator_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
 );
@@ -39,7 +38,7 @@ CREATE TABLE `bookmarks` (
 );
 --> statement-breakpoint
 CREATE TABLE `comments` (
-	`id` text PRIMARY KEY DEFAULT 'b0424f24-d414-46bf-809c-60ddbc0c10b5' NOT NULL,
+	`id` text PRIMARY KEY DEFAULT '831d6779-4f80-473e-bf8d-97f8584d383f' NOT NULL,
 	`comment` text NOT NULL,
 	`user_id` text,
 	`blog_id` text,
@@ -57,11 +56,12 @@ CREATE TABLE `session` (
 CREATE TABLE `users` (
 	`id` text PRIMARY KEY NOT NULL,
 	`username` text,
-	`time_stamp` text DEFAULT (current_timestamp) NOT NULL
+	`time_stamp` text DEFAULT (current_timestamp) NOT NULL,
+	`profile_pic` text DEFAULT ''
 );
 --> statement-breakpoint
 CREATE TABLE `verification_codes` (
-	`id` text PRIMARY KEY DEFAULT '39931813-423b-46fc-abc5-0690e9cb37ba' NOT NULL,
+	`id` text PRIMARY KEY DEFAULT '660aa397-b29a-43bb-a12a-7c1013e2d0fe' NOT NULL,
 	`verification_code` text NOT NULL,
 	`user_id` text,
 	`purpose` text NOT NULL,

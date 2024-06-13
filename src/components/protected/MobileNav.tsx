@@ -12,7 +12,11 @@ const MobileNav = () => {
       <ToggleTheme />
       <button
         className="btn rounded-xl"
-        onClick={() => document.getElementById("my_modal_1")?.showModal()}
+        onClick={() =>
+          (
+            document.getElementById("my_modal_1") as HTMLDialogElement
+          )?.showModal()
+        }
       >
         <LuLogOut className="size-[30px] hover:opacity-50" />
       </button>
