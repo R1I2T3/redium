@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "599ab79d-1de9-422d-a17d-566410e0bf48",
+  "id": "9494e3f7-9cc0-4d0f-b584-bd2b3d3ff2dd",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "email_user": {
@@ -147,7 +147,7 @@
           "primaryKey": true,
           "notNull": true,
           "autoincrement": false,
-          "default": "'583da29e-a912-459e-bbd2-f7e7e3cdf43f'"
+          "default": "'4a38f31f-6b50-4787-9707-92e3750bb49a'"
         },
         "slug": {
           "name": "slug",
@@ -287,7 +287,7 @@
           "primaryKey": true,
           "notNull": true,
           "autoincrement": false,
-          "default": "'831d6779-4f80-473e-bf8d-97f8584d383f'"
+          "default": "'6db7ba9d-17bb-4559-afd8-ba7a7bc471b6'"
         },
         "comment": {
           "name": "comment",
@@ -443,7 +443,7 @@
           "primaryKey": true,
           "notNull": true,
           "autoincrement": false,
-          "default": "'660aa397-b29a-43bb-a12a-7c1013e2d0fe'"
+          "default": "'7435a2d4-d962-43b6-8a1b-06601142e8de'"
         },
         "verification_code": {
           "name": "verification_code",

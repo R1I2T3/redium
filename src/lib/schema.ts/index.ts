@@ -37,3 +37,5 @@ export const CreateBlogSchema = z.object({
   coverImage: FileSchema,
   blog: z.string().min(1, "Required"),
 });
+
+export type CreateBlogType = z.infer<typeof CreateBlogSchema>;

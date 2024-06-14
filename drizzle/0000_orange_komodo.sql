@@ -19,7 +19,7 @@ CREATE TABLE `google_user` (
 );
 --> statement-breakpoint
 CREATE TABLE `blogs` (
-	`id` text PRIMARY KEY DEFAULT '583da29e-a912-459e-bbd2-f7e7e3cdf43f' NOT NULL,
+	`id` text PRIMARY KEY DEFAULT '4a38f31f-6b50-4787-9707-92e3750bb49a' NOT NULL,
 	`slug` text,
 	`title` text NOT NULL,
 	`cover_image` text NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE `bookmarks` (
 );
 --> statement-breakpoint
 CREATE TABLE `comments` (
-	`id` text PRIMARY KEY DEFAULT '831d6779-4f80-473e-bf8d-97f8584d383f' NOT NULL,
+	`id` text PRIMARY KEY DEFAULT '6db7ba9d-17bb-4559-afd8-ba7a7bc471b6' NOT NULL,
 	`comment` text NOT NULL,
 	`user_id` text,
 	`blog_id` text,
@@ -61,7 +61,7 @@ CREATE TABLE `users` (
 );
 --> statement-breakpoint
 CREATE TABLE `verification_codes` (
-	`id` text PRIMARY KEY DEFAULT '660aa397-b29a-43bb-a12a-7c1013e2d0fe' NOT NULL,
+	`id` text PRIMARY KEY DEFAULT '7435a2d4-d962-43b6-8a1b-06601142e8de' NOT NULL,
 	`verification_code` text NOT NULL,
 	`user_id` text,
 	`purpose` text NOT NULL,

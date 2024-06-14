@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { useAtomValue } from "jotai";
 import { themeAtom } from "@/lib/atom";
-import { Provider } from "jotai";
+import { JotaiProvider } from "@/components/JotaiProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({
@@ -13,10 +13,10 @@ export default function RootLayout({
 }>) {
   const theme = useAtomValue(themeAtom);
   return (
-    <html lang="en" data-theme={theme}>
-      <Provider>
+    <JotaiProvider>
+      <html lang="en" data-theme={theme}>
         <body className={`${inter.className} `}>{children}</body>
-      </Provider>
-    </html>
+      </html>
+    </JotaiProvider>
   );
 }
