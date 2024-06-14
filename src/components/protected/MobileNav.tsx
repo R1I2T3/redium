@@ -8,7 +8,7 @@ import Link from "next/link";
 import ToggleTheme from "../ToggleTheme";
 const MobileNav = () => {
   return (
-    <div className="flex flex-row gap-5 justify-center items-center md:hidden">
+    <div className="flex flex-row gap-5 justify-center items-center md:hidden  z-50">
       <ToggleTheme />
       <button
         className="btn rounded-xl"
