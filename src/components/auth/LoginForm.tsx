@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
+import React, { useTransition } from "react";
 import Link from "next/link";
 import AuthFooter from "./AuthFooter";
 import { LoginSchema, LoginType } from "@/lib/schema.ts";
 import { LoginAction } from "@/action/auth";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import toast from "react-hot-toast";
 const LoginForm = () => {
   const {
     control,
@@ -19,13 +20,12 @@ const LoginForm = () => {
       email: "",
     },
   });
-  const [error, setError] = useState<any>("");
   const [pending, startTransition] = useTransition();
   const onSubmit = (values: LoginType) => {
     startTransition(async () => {
       const data = await LoginAction(values);
       if (data.error) {
-        setError(data.error);
+        toast.error(data.error);
       }
     });
   };
@@ -89,14 +89,6 @@ const LoginForm = () => {
         {pending ? <span className="loading loading-spinner"></span> : "Login"}
       </button>
       <AuthFooter />
-      {error && (
-        <div className="toast">
-          <div className="alert alert-info text-white text-sm">
-            <span>{error}</span>
-            <button onClick={() => setError("")}>X</button>
-          </div>
-        </div>
-      )}
     </form>
   );
 };

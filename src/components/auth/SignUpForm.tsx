@@ -7,6 +7,7 @@ import { signUpSchema, signupType } from "@/lib/schema.ts";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signupAction } from "@/action/auth";
+import toast from "react-hot-toast";
 const SignUpForm = () => {
   const {
     control,
@@ -20,13 +21,12 @@ const SignUpForm = () => {
       email: "",
     },
   });
-  const [error, setError] = useState<any>("");
   const [pending, startTransition] = useTransition();
   const onSubmit = (values: signupType) => {
     startTransition(async () => {
       const data = await signupAction(values);
       if (data.error) {
-        setError(data.error);
+        toast.error(data.error);
       }
     });
   };
@@ -104,14 +104,6 @@ const SignUpForm = () => {
         )}
       </button>
       <AuthFooter />
-      {error && (
-        <div className="toast">
-          <div className="alert alert-info text-white text-sm">
-            <span>{error}</span>
-            <button onClick={() => setError("")}>X</button>
-          </div>
-        </div>
-      )}
     </form>
   );
 };

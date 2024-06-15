@@ -19,7 +19,7 @@ import { env } from "@/env";
 export const signupAction = async (data: signupType) => {
   const parsedData = signUpSchema.safeParse(data);
   if (parsedData.error) {
-    return { error: parsedData.error };
+    return { error: "invalid data provided" };
   }
   const existingUser = await db
     .select()

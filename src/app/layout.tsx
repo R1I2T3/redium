@@ -4,6 +4,7 @@ import "./globals.css";
 import { useAtomValue } from "jotai";
 import { themeAtom } from "@/lib/atom";
 import { JotaiProvider } from "@/components/JotaiProvider";
+import { Toaster } from "react-hot-toast";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({
@@ -15,7 +16,10 @@ export default function RootLayout({
   return (
     <JotaiProvider>
       <html lang="en" data-theme={theme}>
-        <body className={`${inter.className} `}>{children}</body>
+        <body className={`${inter.className} `}>
+          <Toaster />
+          {children}
+        </body>
       </html>
     </JotaiProvider>
   );

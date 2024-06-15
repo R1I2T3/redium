@@ -7,7 +7,7 @@ import { useForm, Controller } from "react-hook-form";
 import { CreateBlogSchema, CreateBlogType } from "@/lib/schema.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createBlogAction } from "@/action/blogs";
-import Toast from "../Toast";
+import toast from "react-hot-toast";
 const CreateBlogForm = () => {
   const {
     control,
@@ -39,9 +39,9 @@ const CreateBlogForm = () => {
     startTransition(async () => {
       const response = await createBlogAction(formData);
       if (response?.error) {
-        setError(response.error);
+        toast.error(response.error);
       } else {
-        setSuccess("Blog post created");
+        toast.success("blog post created successfully");
         reset();
       }
     });
@@ -116,8 +116,6 @@ const CreateBlogForm = () => {
           "Create Blog"
         )}
       </button>
-      <Toast factor={error} setFactor={setError} />
-      <Toast factor={success} setFactor={setSuccess} />
     </form>
   );
 };

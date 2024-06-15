@@ -7,6 +7,7 @@ import { blogTable } from "@/lib/db/schema";
 import { CreateBlogSchema } from "@/lib/schema.ts";
 import { createSlug } from "@/utils";
 import { v2 as cloudinary } from "cloudinary";
+import { redirect } from "next/navigation";
 
 cloudinary.config({
   cloud_name: env.CLOUDINARY_CLOUD_NAME,
@@ -14,36 +15,44 @@ cloudinary.config({
   api_secret: env.CLOUDINARY_API_SECRET,
 });
 export const createBlogAction = async (data: FormData) => {
-  try {
-    const dataEntries = Object.fromEntries(data.entries());
-    const parsedData = CreateBlogSchema.parse(dataEntries);
-    const validateSessionResult = await validateRequest();
-    if (!validateSessionResult || validateSessionResult.user === null) {
-      return { error: "Unauthorized action" };
-    }
-    const slug = createSlug(parsedData.title);
-    const arrayBuffer = await parsedData.coverImage.arrayBuffer();
-    const buffer = new Uint8Array(arrayBuffer);
-    const coverImageUrL = await new Promise((resolve, reject) => {
-      cloudinary.uploader
-        .upload_stream({}, function (error, result) {
-          if (error) {
-            reject(error);
-            return;
-          }
-          resolve(result?.secure_url);
-        })
-        .end(buffer);
-    });
-    await db.insert(blogTable).values({
-      title: parsedData.title as string,
-      slug: slug as string,
-      coverImageUrL,
-      blog: parsedData.blog,
-      creatorId: validateSessionResult.user.id!,
-    });
-    return { success: true };
-  } catch (error) {
-    return { error: "some server side error taken place" };
+  const dataEntries = Object.fromEntries(data.entries());
+  const parsedData = CreateBlogSchema.safeParse(dataEntries);
+  if (!parsedData.success) {
+    return { error: "Invalid data provided" };
   }
+  const validateSessionResult = await validateRequest();
+  if (!validateSessionResult || validateSessionResult.user === null) {
+    return { error: "Unauthorized action" };
+  }
+  const { title, blog, coverImage } = parsedData.data;
+  const slug = createSlug(title);
+  const arrayBuffer = await coverImage.arrayBuffer();
+  const buffer = new Uint8Array(arrayBuffer);
+  const coverImageUrL = await new Promise((resolve, reject) => {
+    cloudinary.uploader
+      .upload_stream({}, function (error, result) {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(result?.secure_url);
+      })
+      .end(buffer);
+  });
+  if (
+    typeof title === "string" &&
+    typeof blog === "string" &&
+    typeof coverImageUrL === "string" &&
+    validateSessionResult.user.id
+  ) {
+    await db.insert(blogTable).values({
+      title,
+      blog,
+      coverImageUrL,
+      slug,
+      creatorId: validateSessionResult.user.id,
+    });
+  }
+
+  return redirect("/");
 };
