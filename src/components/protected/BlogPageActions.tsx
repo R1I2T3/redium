@@ -1,22 +1,107 @@
 "use client";
 
-import React from "react";
-import { FaPencilAlt } from "react-icons/fa";
+import React, { useState, useTransition } from "react";
+import { FaPencilAlt, FaBookmark } from "react-icons/fa";
 import { CiBookmark } from "react-icons/ci";
-
-const BlogPageActions = () => {
+import {
+  createCommentAction,
+  addToBookMarkAction,
+  removeFromBookMarkAction,
+} from "@/action/commentAndBookMarks";
+interface BlogPageActionsProps {
+  blog_id: string;
+  isBookmarked: boolean;
+}
+const BlogPageActions = ({ blog_id, isBookmarked }: BlogPageActionsProps) => {
+  const [comment, setComment] = useState("");
+  const [pending, startTransition] = useTransition();
+  const onCreateCommentOnClick = (e: any) => {
+    e.preventDefault();
+    startTransition(async () => {
+      setComment("");
+      await createCommentAction(comment, blog_id);
+      (document.getElementById("my_modal_3") as HTMLDialogElement).close();
+    });
+  };
+  const onAddToBookMarkButton = () => {
+    startTransition(async () => {
+      await addToBookMarkAction(blog_id);
+    });
+  };
+  const onRemoveToBookMarkButton = () => {
+    startTransition(async () => {
+      await removeFromBookMarkAction(blog_id);
+    });
+  };
   return (
     <div>
-      <div className="divider"></div>
+      <div className="divider my-3"></div>
       <div className="flex justify-between items-center">
-        <button>
+        <button
+          className="btn"
+          onClick={() =>
+            (
+              document.getElementById("my_modal_3") as HTMLDialogElement
+            ).showModal()
+          }
+        >
           <FaPencilAlt size={30} />
         </button>
-        <button>
-          <CiBookmark size={30} />
-        </button>
+        <dialog id="my_modal_3" className="modal">
+          <div className="modal-box">
+            <div className="modal-action">
+              <form method="dialog" className="flex flex-col w-full gap-3">
+                <input
+                  type="text"
+                  className="input input-bordered rounded-md"
+                  placeholder="Enter your comment here"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                />
+                <div className="flex justify-end gap-3 items-center">
+                  <button className="btn btn-accent rounded-md px-4">
+                    Close
+                  </button>
+                  <button
+                    className="btn btn-primary rounded-md px-4 disabled:btn-primary "
+                    type="button"
+                    onClick={onCreateCommentOnClick}
+                    disabled={pending}
+                  >
+                    {pending ? "creating..." : "create comment"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </dialog>
+        {isBookmarked ? (
+          <button
+            className="btn"
+            onClick={() => onRemoveToBookMarkButton()}
+            disabled={pending}
+          >
+            {pending ? (
+              <span className="loading loading-spinner"></span>
+            ) : (
+              <FaBookmark size={30} />
+            )}
+          </button>
+        ) : (
+          <button
+            className="btn"
+            onClick={() => onAddToBookMarkButton()}
+            disabled={pending}
+          >
+            {pending ? (
+              <span className="loading loading-spinner"></span>
+            ) : (
+              <CiBookmark size={30} />
+            )}
+          </button>
+        )}
       </div>
-      <div className="divider"></div>
+      <div className="divider my-3"></div>
     </div>
   );
 };

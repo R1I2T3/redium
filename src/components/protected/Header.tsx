@@ -8,7 +8,7 @@ import ToggleTheme from "../ToggleTheme";
 
 const Header = () => {
   return (
-    <nav className="flex justify-between items-center p-4 bg-current/30 border-b-2">
+    <nav className="sticky top-0 z-50 flex justify-between items-center p-4 bg-indigo-500">
       <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight">
         Redium
       </h1>
@@ -30,7 +30,7 @@ const Header = () => {
           Dash Board
         </Link>
         <button
-          className="btn rounded-xl"
+          className="btn rounded-xl bg-indigo-500 border-indigo-400 hover:bg-indigo-800"
           onClick={() =>
             (
               document.getElementById("my_modal_2") as HTMLDialogElement

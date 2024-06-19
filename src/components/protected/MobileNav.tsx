@@ -11,7 +11,7 @@ const MobileNav = () => {
     <div className="flex flex-row gap-5 justify-center items-center md:hidden  z-50">
       <ToggleTheme />
       <button
-        className="btn rounded-xl"
+        className="btn rounded-xl bg-indigo-500 border-indigo-400 hover:bg-indigo-800"
         onClick={() =>
           (
             document.getElementById("my_modal_1") as HTMLDialogElement
