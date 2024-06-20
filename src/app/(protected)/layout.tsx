@@ -13,7 +13,7 @@ export default async function RootLayout({
   return (
     <>
       <Header />
-      <main className="px-4 pt-4 mb-[100px] no-scrollbar">{children}</main>
+      <main className="px-4 pt-4 mb-[100px] md:mb-10">{children}</main>
     </>
   );
 }

@@ -9,8 +9,6 @@ interface verificationCodeFormProps {
   username: string;
 }
 const VerificationCodeForm = ({ username }: verificationCodeFormProps) => {
-  console.log(username);
-
   const {
     control,
     handleSubmit,
@@ -23,8 +21,6 @@ const VerificationCodeForm = ({ username }: verificationCodeFormProps) => {
   });
   const [pending, startTransition] = useTransition();
   const onSubmit = async (values: verificationCodeType) => {
-    console.log("I am here");
-
     startTransition(async () => {
       const data = await verifyAccountAction(values.code, username);
       if (data.error) {

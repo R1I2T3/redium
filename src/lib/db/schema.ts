@@ -4,7 +4,7 @@ import {
   integer,
   primaryKey,
 } from "drizzle-orm/sqlite-core";
-import { sql } from "drizzle-orm";
+import { InferSelectModel, sql } from "drizzle-orm";
 import { v4 as uuid } from "uuid";
 
 export const userTable = sqliteTable("users", {
@@ -75,8 +75,12 @@ export const bookmarkTable = sqliteTable(
 );
 
 export const commentTable = sqliteTable("comments", {
-  id: text("id").primaryKey().default(uuid()),
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => uuid()),
   comment: text("comment").notNull(),
   userId: text("user_id").references(() => userTable.id),
   blogId: text("blog_id").references(() => blogTable.id),
 });
+
+export type CommentSelectType = InferSelectModel<typeof commentTable>;

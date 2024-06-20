@@ -8,19 +8,30 @@ import {
   addToBookMarkAction,
   removeFromBookMarkAction,
 } from "@/action/commentAndBookMarks";
+import { useAtom } from "jotai";
+import { commentsAtom } from "@/lib/atom";
+import toast from "react-hot-toast";
 interface BlogPageActionsProps {
   blog_id: string;
   isBookmarked: boolean;
 }
 const BlogPageActions = ({ blog_id, isBookmarked }: BlogPageActionsProps) => {
   const [comment, setComment] = useState("");
+  const [comments, setComments] = useAtom(commentsAtom);
   const [pending, startTransition] = useTransition();
   const onCreateCommentOnClick = (e: any) => {
     e.preventDefault();
     startTransition(async () => {
       setComment("");
-      await createCommentAction(comment, blog_id);
+      const data = await createCommentAction(comment, blog_id);
       (document.getElementById("my_modal_3") as HTMLDialogElement).close();
+      if (data.error) {
+        toast.error(data.error);
+      }
+      if (!data.newComment) return;
+      const allComments = [data.newComment, ...comments];
+      setComments(allComments);
+      console.log(comments);
     });
   };
   const onAddToBookMarkButton = () => {
@@ -35,7 +46,7 @@ const BlogPageActions = ({ blog_id, isBookmarked }: BlogPageActionsProps) => {
   };
   return (
     <div>
-      <div className="divider my-3"></div>
+      <div className="divider my-0"></div>
       <div className="flex justify-between items-center">
         <button
           className="btn"
@@ -101,7 +112,7 @@ const BlogPageActions = ({ blog_id, isBookmarked }: BlogPageActionsProps) => {
           </button>
         )}
       </div>
-      <div className="divider my-3"></div>
+      <div className="divider my-0"></div>
     </div>
   );
 };

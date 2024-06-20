@@ -12,15 +12,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const theme = useAtomValue(themeAtom);
+  // const theme = useAtomValue(themeAtom);
   return (
-    <JotaiProvider>
-      <html lang="en" data-theme={theme}>
-        <body className={`${inter.className} `}>
-          <Toaster />
-          {children}
-        </body>
-      </html>
-    </JotaiProvider>
+    <html lang="en" data-theme={"sunset"}>
+      <body className={`${inter.className} `}>
+        <Toaster />
+        <JotaiProvider>{children}</JotaiProvider>
+      </body>
+    </html>
   );
 }

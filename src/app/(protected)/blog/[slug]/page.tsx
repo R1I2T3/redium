@@ -1,10 +1,5 @@
 import { db } from "@/lib/db";
-import {
-  blogTable,
-  bookmarkTable,
-  commentTable,
-  userTable,
-} from "@/lib/db/schema";
+import { blogTable, bookmarkTable } from "@/lib/db/schema";
 import { and, eq } from "drizzle-orm";
 import Image from "next/image";
 import React from "react";
@@ -13,6 +8,7 @@ import { cache } from "react";
 import { notFound, redirect } from "next/navigation";
 import BlogPageActions from "@/components/protected/BlogPageActions";
 import { validateRequest } from "@/lib/auth/verifyAccount";
+import CommentSection from "@/components/protected/CommentSection";
 interface BlogPageProps {
   params: {
     slug: string;
@@ -25,11 +21,6 @@ const getBlog = cache(async (slug: string) => {
   const verifySessionResult = await validateRequest();
   if (!blog) notFound();
   if (!verifySessionResult.user) redirect("/auth/login");
-  const comments = await db
-    .select()
-    .from(commentTable)
-    .limit(4)
-    .where(eq(commentTable.blogId, blog.id));
   const isBookmarked =
     (
       await db
@@ -42,10 +33,11 @@ const getBlog = cache(async (slug: string) => {
           )
         )
     ).length !== 0;
-  return { blog, comments, isBookmarked };
+  return { blog, isBookmarked, user_id: verifySessionResult.user.id };
 });
+
 const BlogPage = async ({ params: { slug } }: BlogPageProps) => {
-  const { blog, comments, isBookmarked } = await getBlog(slug);
+  const { blog, isBookmarked, user_id } = await getBlog(slug);
   return (
     <div className="w-[96%] md:w-[70%] lg:w-[45%] m-auto">
       <h1 className="text-xl md:text-2xl lg:text-3xl tracking-tight font-bold text-center mb-3">
@@ -60,13 +52,7 @@ const BlogPage = async ({ params: { slug } }: BlogPageProps) => {
       />
       {blog.blog && <Markdown>{blog.blog}</Markdown>}
       <BlogPageActions blog_id={blog.id} isBookmarked={isBookmarked} />
-      {comments.length !== 0 ? (
-        comments.map((comment) => <p key={comment.id}>{comment.comment}</p>)
-      ) : (
-        <h1 className="text-center font-bold text-xl">
-          There are no comments in this blog
-        </h1>
-      )}
+      <CommentSection blog_id={blog.id} user_id={user_id} />
     </div>
   );
 };

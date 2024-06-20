@@ -19,14 +19,63 @@ export const createCommentAction = async (comment: string, blog_id: string) => {
   if (!isBlogPresent) {
     return { error: "This comment can't be added because blog is not present" };
   }
-  await db.insert(commentTable).values({
-    comment,
-    userId: validateSessionResult.user.id,
-    blogId: blog_id,
-  });
-  revalidatePath("/(protected)/blog/[slug]", "page");
+  const newComment = (
+    await db
+      .insert(commentTable)
+      .values({
+        comment,
+        userId: validateSessionResult.user.id,
+        blogId: blog_id,
+      })
+      .returning({
+        id: commentTable.id,
+        blogId: commentTable.blogId,
+        userId: commentTable.userId,
+        comment: commentTable.comment,
+      })
+  )[0];
+  return { newComment };
 };
 
+export const getComments = async (skip: number, blog_id: string) => {
+  try {
+    const comments = await db
+      .select()
+      .from(commentTable)
+      .limit(5)
+      .offset(skip * 5)
+      .where(eq(commentTable.blogId, blog_id));
+    return comments;
+  } catch (error: unknown) {
+    console.log(error);
+    throw new Error(`An error happened: ${error}`);
+  }
+};
+
+export const deleteCommentAction = async (comment_id: string) => {
+  try {
+    const validateSessionResult = await validateRequest();
+    if (!validateSessionResult || validateSessionResult.user === null) {
+      return { error: "Unauthorized action" };
+    }
+    const comment = (
+      await db
+        .select()
+        .from(commentTable)
+        .where(eq(commentTable.id, comment_id))
+    )[0];
+    if (!comment) {
+      return { error: "Invalid comment id provided" };
+    }
+    if (validateSessionResult.user.id !== comment.userId) {
+      return { error: "You are not authorize to perform this action" };
+    }
+    await db.delete(commentTable).where(eq(commentTable.id, comment_id));
+    return { success: "Comment deleted successfully" };
+  } catch (error) {
+    return { error: "some server side error taken place" };
+  }
+};
 export const addToBookMarkAction = async (blog_id: string) => {
   const validateSessionResult = await validateRequest();
   if (!validateSessionResult || validateSessionResult.user === null) {
