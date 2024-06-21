@@ -39,3 +39,11 @@ export const CreateBlogSchema = z.object({
 });
 
 export type CreateBlogType = z.infer<typeof CreateBlogSchema>;
+
+export const UpdateBlogSchema = z.object({
+  title: z.string().min(1, "Title is required").optional(),
+  coverImage: FileSchema.optional(),
+  blog: z.string().min(1, "Required").optional(),
+});
+
+export type UpdateBlogType = z.infer<typeof UpdateBlogSchema>;
