@@ -9,6 +9,7 @@ import { notFound, redirect } from "next/navigation";
 import BlogPageActions from "@/components/protected/BlogPageActions";
 import { validateRequest } from "@/lib/auth/verifyAccount";
 import CommentSection from "@/components/protected/CommentSection";
+import BlogPageCreatorActions from "@/components/protected/BlogPageCreatorActions";
 interface BlogPageProps {
   params: {
     slug: string;
@@ -51,7 +52,16 @@ const BlogPage = async ({ params: { slug } }: BlogPageProps) => {
         className="size-[100%] mx-auto my-6"
       />
       {blog.blog && <Markdown>{blog.blog}</Markdown>}
-      <BlogPageActions blog_id={blog.id} isBookmarked={isBookmarked} />
+      <section>
+        <div className="divider my-0"></div>
+        <div className="flex justify-between items-center w-full gap-3">
+          <BlogPageActions blog_id={blog.id} isBookmarked={isBookmarked} />
+          {user_id === blog.creatorId && (
+            <BlogPageCreatorActions slug={blog.slug} />
+          )}
+        </div>
+        <div className="divider my-0"></div>
+      </section>
       <CommentSection blog_id={blog.id} user_id={user_id} />
     </div>
   );

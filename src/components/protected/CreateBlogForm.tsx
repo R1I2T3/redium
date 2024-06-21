@@ -23,8 +23,6 @@ const CreateBlogForm = () => {
   });
   const [pending, startTransition] = useTransition();
   const [ImageError, setImageError] = useState<string>("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const onSubmit = (values: CreateBlogType) => {
     if (!values.coverImage) {
       setImageError("Cover Image is required");

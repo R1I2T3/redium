@@ -17,7 +17,7 @@ export default function RootLayout({
     <html lang="en" data-theme={theme}>
       <body className={`${inter.className} `}>
         <JotaiProvider>
-          <Toaster />
+          <Toaster position="bottom-right" />
           {children}
         </JotaiProvider>
       </body>

@@ -3,12 +3,12 @@
 import { env } from "@/env";
 import { validateRequest } from "@/lib/auth/verifyAccount";
 import { db } from "@/lib/db";
-import { blogTable } from "@/lib/db/schema";
+import { blogTable, bookmarkTable, commentTable } from "@/lib/db/schema";
 import { CreateBlogSchema } from "@/lib/schema.ts";
 import { createSlug } from "@/utils";
 import { v2 as cloudinary } from "cloudinary";
 import { redirect } from "next/navigation";
-
+import { eq } from "drizzle-orm";
 cloudinary.config({
   cloud_name: env.CLOUDINARY_CLOUD_NAME,
   api_key: env.CLOUDINARY_API_KEY,
@@ -55,4 +55,32 @@ export const createBlogAction = async (data: FormData) => {
   }
 
   return redirect("/");
+};
+
+export const deleteBlogAction = async (slug: string) => {
+  const validateSessionResult = await validateRequest();
+  if (!validateSessionResult || validateSessionResult.user === null) {
+    return { error: "Unauthorized action" };
+  }
+  const currentBlog = (
+    await db.select().from(blogTable).where(eq(blogTable.slug, slug))
+  )[0];
+  if (!currentBlog) {
+    return { error: "Following blog does not exists" };
+  }
+  if (currentBlog.creatorId !== validateSessionResult.user.id) {
+    return {
+      error: "You can't delete this blog because you didn't created it",
+    };
+  }
+  await db.transaction(async (trx) => {
+    await trx
+      .delete(commentTable)
+      .where(eq(commentTable.blogId, currentBlog.id));
+    await trx
+      .delete(bookmarkTable)
+      .where(eq(bookmarkTable.blogId, currentBlog.id));
+    await trx.delete(blogTable).where(eq(blogTable.slug, slug));
+  });
+  return { success: "Blog deleted successfully" };
 };
