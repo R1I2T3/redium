@@ -76,6 +76,40 @@ export const deleteCommentAction = async (comment_id: string) => {
     return { error: "some server side error taken place" };
   }
 };
+
+export const updateCommentAction = async (
+  newComment: string,
+  comment_id: string
+) => {
+  try {
+    const validateSessionResult = await validateRequest();
+    if (!validateSessionResult || validateSessionResult.user === null) {
+      return { error: "Unauthorized action" };
+    }
+    const comment = (
+      await db
+        .select()
+        .from(commentTable)
+        .where(eq(commentTable.id, comment_id))
+    )[0];
+    if (!comment) {
+      return { error: "Invalid comment id provided" };
+    }
+    if (validateSessionResult.user.id !== comment.userId) {
+      return { error: "You are not authorize to perform this action" };
+    }
+    const updateComment = (
+      await db
+        .update(commentTable)
+        .set({ comment: newComment })
+        .where(eq(commentTable.id, comment_id))
+        .returning({ id: commentTable.id, comment: commentTable.comment })
+    )[0];
+    return { updateComment: updateComment };
+  } catch (error) {
+    return { error: "some server side error taken place" };
+  }
+};
 export const addToBookMarkAction = async (blog_id: string) => {
   const validateSessionResult = await validateRequest();
   if (!validateSessionResult || validateSessionResult.user === null) {
