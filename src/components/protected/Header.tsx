@@ -8,7 +8,7 @@ import ToggleTheme from "../ToggleTheme";
 
 const Header = () => {
   return (
-    <nav className="sticky top-0 z-50 flex justify-between items-center p-4 bg-indigo-500">
+    <nav className="sticky top-0 z-50 flex justify-between items-center p-4 bg-indigo-500 shadow-2xl">
       <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight">
         Redium
       </h1>

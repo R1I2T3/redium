@@ -1,7 +1,5 @@
-import React from "react";
-
 const DashboardPage = () => {
-  return <div>DashboardPage</div>;
+  return null;
 };
 
 export default DashboardPage;
