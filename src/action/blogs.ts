@@ -74,6 +74,9 @@ export const deleteBlogAction = async (slug: string) => {
       error: "You can't delete this blog because you didn't created it",
     };
   }
+  await cloudinary.uploader.destroy(
+    currentBlog.coverImageUrL.split("/").pop()?.split(".")[0] as string
+  );
   await db.transaction(async (trx) => {
     await trx
       .delete(commentTable)
@@ -109,6 +112,9 @@ export const updateBlogAction = async (data: FormData, blogId: string) => {
   }
   let coverImageUrL: any = "";
   if (parsedData.coverImage) {
+    await cloudinary.uploader.destroy(
+      isCreator.coverImageUrL.split("/").pop()?.split(".")[0] as string
+    );
     const arrayBuffer = await parsedData.coverImage.arrayBuffer();
     const buffer = new Uint8Array(arrayBuffer);
     const c = await new Promise((resolve, reject) => {

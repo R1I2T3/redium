@@ -15,7 +15,7 @@ export default function RootLayout({
   const theme = useAtomValue(themeAtom);
   return (
     <html lang="en" data-theme={theme}>
-      <body className={`${inter.className} `}>
+      <body>
         <JotaiProvider>
           <Toaster position="bottom-right" />
           {children}
