@@ -1,39 +1,36 @@
 {
-  "version": "6",
-  "dialect": "sqlite",
-  "id": "9494e3f7-9cc0-4d0f-b584-bd2b3d3ff2dd",
+  "id": "90303f45-a984-4d72-8299-7fbd23a87467",
   "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
   "tables": {
-    "email_user": {
+    "public.email_user": {
       "name": "email_user",
+      "schema": "",
       "columns": {
         "email": {
           "name": "email",
           "type": "text",
           "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         },
         "password": {
           "name": "password",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         },
         "is_verified": {
           "name": "is_verified",
-          "type": "integer",
+          "type": "boolean",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": false
         },
         "userId": {
           "name": "userId",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": false
         }
       },
       "indexes": {},
@@ -55,22 +52,21 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "github_user": {
+    "public.github_user": {
       "name": "github_user",
+      "schema": "",
       "columns": {
         "github_id": {
           "name": "github_id",
           "type": "text",
           "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         },
         "user_id": {
           "name": "user_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": false
         }
       },
       "indexes": {},
@@ -92,34 +88,25 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "google_user": {
+    "public.google_user": {
       "name": "google_user",
+      "schema": "",
       "columns": {
         "google_id": {
           "name": "google_id",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false,
           "default": "''"
         },
         "user_id": {
           "name": "user_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": false
         }
       },
-      "indexes": {
-        "google_user_google_id_unique": {
-          "name": "google_user_google_id_unique",
-          "columns": [
-            "google_id"
-          ],
-          "isUnique": true
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
         "google_user_user_id_users_id_fk": {
           "name": "google_user_user_id_users_id_fk",
@@ -136,72 +123,66 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "google_user_google_id_unique": {
+          "name": "google_user_google_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "google_id"
+          ]
+        }
+      }
     },
-    "blogs": {
+    "public.blogs": {
       "name": "blogs",
+      "schema": "",
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": false,
-          "default": "'4a38f31f-6b50-4787-9707-92e3750bb49a'"
+          "default": "gen_random_uuid()"
         },
         "slug": {
           "name": "slug",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": false
         },
         "title": {
           "name": "title",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         },
         "cover_image": {
           "name": "cover_image",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         },
         "blog": {
           "name": "blog",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         },
         "creator_id": {
           "name": "creator_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": false
         },
-        "time_stamp": {
-          "name": "time_stamp",
-          "type": "text",
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": "(current_timestamp)"
+          "default": "now()"
         }
       },
-      "indexes": {
-        "blogs_slug_unique": {
-          "name": "blogs_slug_unique",
-          "columns": [
-            "slug"
-          ],
-          "isUnique": true
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
         "blogs_creator_id_users_id_fk": {
           "name": "blogs_creator_id_users_id_fk",
@@ -218,24 +199,31 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "blogs_slug_unique": {
+          "name": "blogs_slug_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "slug"
+          ]
+        }
+      }
     },
-    "bookmarks": {
+    "public.bookmarks": {
       "name": "bookmarks",
+      "schema": "",
       "columns": {
         "userId": {
           "name": "userId",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": false
         },
         "blog_id": {
           "name": "blog_id",
-          "type": "text",
+          "type": "uuid",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": false
         }
       },
       "indexes": {},
@@ -269,46 +257,43 @@
       },
       "compositePrimaryKeys": {
         "bookmarks_userId_blog_id_pk": {
+          "name": "bookmarks_userId_blog_id_pk",
           "columns": [
-            "blog_id",
-            "userId"
-          ],
-          "name": "bookmarks_userId_blog_id_pk"
+            "userId",
+            "blog_id"
+          ]
         }
       },
       "uniqueConstraints": {}
     },
-    "comments": {
+    "public.comments": {
       "name": "comments",
+      "schema": "",
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": false,
-          "default": "'6db7ba9d-17bb-4559-afd8-ba7a7bc471b6'"
+          "default": "gen_random_uuid()"
         },
         "comment": {
           "name": "comment",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         },
         "user_id": {
           "name": "user_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": false
         },
         "blog_id": {
           "name": "blog_id",
-          "type": "text",
+          "type": "uuid",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": false
         }
       },
       "indexes": {},
@@ -343,29 +328,27 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "session": {
+    "public.session": {
       "name": "session",
+      "schema": "",
       "columns": {
         "id": {
           "name": "id",
           "type": "text",
           "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         },
         "user_id": {
           "name": "user_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         },
         "expires_at": {
           "name": "expires_at",
-          "type": "integer",
+          "type": "timestamp with time zone",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         }
       },
       "indexes": {},
@@ -387,91 +370,77 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "users": {
+    "public.users": {
       "name": "users",
+      "schema": "",
       "columns": {
         "id": {
           "name": "id",
           "type": "text",
           "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         },
         "username": {
           "name": "username",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": false
         },
-        "time_stamp": {
-          "name": "time_stamp",
-          "type": "text",
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": "(current_timestamp)"
-        },
-        "profile_pic": {
-          "name": "profile_pic",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": "''"
+          "default": "now()"
         }
       },
-      "indexes": {
-        "users_username_unique": {
-          "name": "users_username_unique",
-          "columns": [
-            "username"
-          ],
-          "isUnique": true
-        }
-      },
+      "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "users_username_unique": {
+          "name": "users_username_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "username"
+          ]
+        }
+      }
     },
-    "verification_codes": {
+    "public.verification_codes": {
       "name": "verification_codes",
+      "schema": "",
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": false,
-          "default": "'7435a2d4-d962-43b6-8a1b-06601142e8de'"
+          "default": "gen_random_uuid()"
         },
         "verification_code": {
           "name": "verification_code",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         },
         "user_id": {
           "name": "user_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": false
         },
         "purpose": {
           "name": "purpose",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         },
         "expire_at": {
           "name": "expire_at",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         }
       },
       "indexes": {},
@@ -495,12 +464,10 @@
     }
   },
   "enums": {},
+  "schemas": {},
   "_meta": {
+    "columns": {},
     "schemas": {},
-    "tables": {},
-    "columns": {}
-  },
-  "internal": {
-    "indexes": {}
+    "tables": {}
   }
 }

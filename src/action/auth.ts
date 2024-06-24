@@ -25,9 +25,13 @@ export const signupAction = async (data: signupType) => {
     .select()
     .from(userTable)
     .where(eq(userTable.username, data.username));
+  console.log(existingUser);
+
   if (existingUser.length !== 0) {
     return { error: "Account already exists" };
   }
+  console.log("I am here");
+
   const hashedPassword = await scrypt.hash(data.password);
   const userId = generateIdFromEntropySize(10);
   const newUser = (
@@ -39,6 +43,7 @@ export const signupAction = async (data: signupType) => {
       })
       .returning({ username: userTable.username })
   )[0];
+
   await db
     .insert(EmailPasswordTable)
     .values({ password: hashedPassword, email: data.email, userId });

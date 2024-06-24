@@ -9,6 +9,7 @@ import { createSlug } from "@/utils";
 import { v2 as cloudinary } from "cloudinary";
 import { redirect } from "next/navigation";
 import { eq, and } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 cloudinary.config({
   cloud_name: env.CLOUDINARY_CLOUD_NAME,
   api_key: env.CLOUDINARY_API_KEY,
@@ -86,6 +87,7 @@ export const deleteBlogAction = async (slug: string) => {
       .where(eq(bookmarkTable.blogId, currentBlog.id));
     await trx.delete(blogTable).where(eq(blogTable.slug, slug));
   });
+  revalidatePath("/blog/[slug]", "page");
   return { success: "Blog deleted successfully" };
 };
 
