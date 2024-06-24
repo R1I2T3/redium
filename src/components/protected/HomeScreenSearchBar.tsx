@@ -7,7 +7,7 @@ const HomeScreenSearchBar = ({ search }: { search: string }) => {
   const router = useRouter();
   const initialRender = useRef(true);
 
-  const [text, setText] = useState(search);
+  const [text, setText] = useState(search || "");
   const [query] = useDebounce(text, 500);
 
   useEffect(() => {

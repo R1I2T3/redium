@@ -31,6 +31,8 @@ const BlogsSections = ({ initialData, q, type }: BlogPageSectionProps) => {
             type: type ? type : "",
             q: q ? q : "",
           });
+          console.log(blogs);
+
           if (!blogs || blogs.length === 0 || blogs.length % 6 !== 0) {
             setCanFetch(false);
           }

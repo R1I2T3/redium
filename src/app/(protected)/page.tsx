@@ -14,7 +14,9 @@ const HomePage = async ({ searchParams: { q } }: HomePageProps) => {
   return (
     <div className="flex flex-col justify-center items-center">
       <HomeScreenSearchBar search={q} />
-      <BlogsSections initialData={data.blogs} q={q} />
+      <li key={Math.random()} className="w-[100%]">
+        <BlogsSections initialData={data.blogs} q={q} />
+      </li>
     </div>
   );
 };
