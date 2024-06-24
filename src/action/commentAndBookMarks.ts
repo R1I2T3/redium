@@ -45,8 +45,6 @@ export const getComments = async (skip: number, blog_id: string) => {
       .limit(5)
       .offset(skip * 5)
       .where(eq(commentTable.blogId, blog_id));
-    console.log(comments);
-
     return comments;
   } catch (error: unknown) {
     console.log(error);

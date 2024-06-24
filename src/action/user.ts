@@ -3,14 +3,17 @@
 import { validateRequest } from "@/lib/auth/verifyAccount";
 import { blogTable, bookmarkTable } from "@/lib/db/schema";
 import { db } from "@/lib/db";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export const getBlogs = async ({
   offset,
   type = "",
+  q,
 }: {
   offset: number;
   type: string;
+  q: string;
 }) => {
   try {
     const validateSessionResult = await validateRequest();
@@ -26,7 +29,7 @@ export const getBlogs = async ({
           title: blogTable.title,
         })
         .from(blogTable)
-        .offset(offset)
+        .offset(offset * 6)
         .limit(6)
         .where(eq(blogTable.creatorId, validateSessionResult.user.id));
     } else if (type === "bookmarks") {
@@ -39,16 +42,33 @@ export const getBlogs = async ({
         .from(bookmarkTable)
         .innerJoin(blogTable, eq(bookmarkTable.blogId, blogTable.id))
         .where(eq(bookmarkTable.userId, validateSessionResult.user.id))
-        .offset(offset)
+        .offset(offset * 6)
         .limit(6);
     } else {
-      blogs = await db
-        .select({
-          slug: blogTable.slug,
-          coverImage: blogTable.coverImageUrL,
-          title: blogTable.title,
-        })
-        .from(blogTable);
+      if (q) {
+        blogs = await db
+          .select({
+            slug: blogTable.slug,
+            coverImage: blogTable.coverImageUrL,
+            title: blogTable.title,
+          })
+          .from(blogTable)
+          .limit(6)
+          .offset(offset * 6)
+          .where(
+            sql`to_tsvector('english', ${blogTable.title}) @@ plainto_tsquery('english', ${q})`
+          );
+      } else {
+        blogs = await db
+          .select({
+            slug: blogTable.slug,
+            coverImage: blogTable.coverImageUrL,
+            title: blogTable.title,
+          })
+          .from(blogTable)
+          .limit(6)
+          .offset(offset * 6);
+      }
     }
     return { blogs };
   } catch (error) {

@@ -1,24 +1,21 @@
 import { getBlogs } from "@/action/user";
-import BlogCard from "@/components/protected/BlogCard";
+import BlogsSections from "@/components/protected/BlogsSections";
+import HomeScreenSearchBar from "@/components/protected/HomeScreenSearchBar";
 import { notFound } from "next/navigation";
 import React from "react";
-
-const HomePage = async () => {
-  const data = await getBlogs({ offset: 0, type: "" });
+interface HomePageProps {
+  searchParams: {
+    q: string;
+  };
+}
+const HomePage = async ({ searchParams: { q } }: HomePageProps) => {
+  const data = await getBlogs({ offset: 0, type: "", q });
   if (!data || data.error) return notFound();
-  if (!data.blogs) return;
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-      {data.blogs.map((blog) => (
-        <BlogCard
-          key={blog.slug}
-          title={blog.title}
-          slug={blog.slug}
-          coverImage={blog.coverImage}
-        />
-      ))}
+    <div className="flex flex-col justify-center items-center">
+      <HomeScreenSearchBar search={q} />
+      <BlogsSections initialData={data.blogs} q={q} />
     </div>
   );
 };
-
 export default HomePage;

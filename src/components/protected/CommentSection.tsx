@@ -8,13 +8,17 @@ import { commentsAtom } from "@/lib/atom";
 interface CommentSectionProps {
   blog_id: string;
   user_id: string;
+  slug: string;
 }
-const CommentSection = ({ blog_id, user_id }: CommentSectionProps) => {
+const CommentSection = ({ blog_id, user_id, slug }: CommentSectionProps) => {
   const [comments, setComments] = useAtom(commentsAtom);
   const [offset, setOffset] = useState(0);
   const [isDataAvailableToFetch, setIsDataAvailableToFetch] = useState(true);
   const { ref, inView } = useInView();
   const [pending, startTransition] = useTransition();
+  useEffect(() => {
+    setComments([]);
+  }, []);
   useEffect(() => {
     if (inView) {
       if (!isDataAvailableToFetch || comments.length % 5 !== 0) return;
@@ -28,7 +32,15 @@ const CommentSection = ({ blog_id, user_id }: CommentSectionProps) => {
         setOffset((prev) => prev + 1);
       });
     }
-  }, [inView, blog_id, isDataAvailableToFetch]);
+  }, [
+    inView,
+    blog_id,
+    isDataAvailableToFetch,
+    slug,
+    comments,
+    setComments,
+    offset,
+  ]);
   return (
     <>
       <div className="flex flex-col gap-3">

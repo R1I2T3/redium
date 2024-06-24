@@ -20,7 +20,8 @@ const chartData = cache(async () => {
     })
     .from(blogTable)
     .innerJoin(commentTable, eq(commentTable.blogId, blogTable.id))
-    .where(eq(blogTable.creatorId, user_id));
+    .where(eq(blogTable.creatorId, user_id))
+    .groupBy(blogTable.title);
   const bookmarks = await db
     .select({
       bookmarks: count(bookmarkTable),
@@ -29,7 +30,8 @@ const chartData = cache(async () => {
     })
     .from(blogTable)
     .innerJoin(bookmarkTable, eq(bookmarkTable.blogId, blogTable.id))
-    .where(eq(blogTable.creatorId, user_id));
+    .where(eq(blogTable.creatorId, user_id))
+    .groupBy(blogTable.title);
   return { comments, bookmarks };
 });
 const AnalyticsPage = async () => {
@@ -41,19 +43,13 @@ const AnalyticsPage = async () => {
       </h1>
       {comments.length === 0 && bookmarks.length === 0 ? (
         <h2 className="text-xl text-center font-extralight">
-          There are no blogs created by yoy to show analytics
+          There is no data to show analytics
         </h2>
       ) : (
         <div className="flex flex-col lg:flex-row  justify-center items-center w-[100%] h-[70dvh] lg:h-[100%] space-y-10 lg:space-y-0 lg:space-x-10">
-          {comments[0].comments !== 0 ? (
-            <Chart data={comments} type="comments" />
-          ) : (
-            <h1>{"There are not comment to show"}</h1>
-          )}
-          {bookmarks[0].bookmarks !== 0 ? (
+          {comments.length !== 0 && <Chart data={comments} type="comments" />}
+          {bookmarks.length !== 0 && (
             <Chart data={bookmarks} type="bookmarks" />
-          ) : (
-            <h1>{"There are not bookmarks to show"}</h1>
           )}
         </div>
       )}

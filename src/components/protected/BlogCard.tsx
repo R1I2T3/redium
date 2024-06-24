@@ -11,7 +11,7 @@ const BlogCard = ({ title, slug, coverImage }: blogCardProps) => {
   if (!title || !slug || !coverImage) return;
   return (
     <Link
-      className="card flex flex-row md:flex-col-reverse w-[90%] items-center justify-between md:justify-center p-4 shadow-xl rounded-xl border-2 border-indigo-500/30 h-[150px] md:h-[250px] my-6 hover:opacity-65"
+      className="card flex flex-row md:flex-col-reverse w-[90%] items-center justify-between md:justify-center p-4 shadow-xl rounded-xl border-2 border-indigo-500/30 h-[150px] md:h-[250px] my-6 hover:opacity-65 mx-auto"
       href={`/blog/${slug}`}
     >
       <h1 className="text-sm md:text-md max-h-[90%] overflow-scroll  text-pretty scroll-m-0 no-scrollbar font-bold">

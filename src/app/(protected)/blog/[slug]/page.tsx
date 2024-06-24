@@ -62,7 +62,7 @@ const BlogPage = async ({ params: { slug } }: BlogPageProps) => {
         </div>
         <div className="divider my-0"></div>
       </section>
-      <CommentSection blog_id={blog.id} user_id={user_id} />
+      <CommentSection blog_id={blog.id} user_id={user_id} slug={slug} />
     </div>
   );
 };
