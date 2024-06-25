@@ -46,7 +46,7 @@ const BlogsSections = ({ initialData, q, type }: BlogPageSectionProps) => {
   }, [inView, q, page, canFetch, type]);
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-[90%]">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-[90%] m-auto">
         {pages.length !== 0
           ? pages.map((blog) => (
               <BlogCard

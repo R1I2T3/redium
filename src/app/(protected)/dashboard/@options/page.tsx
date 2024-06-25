@@ -12,15 +12,15 @@ const chartData = cache(async () => {
     return redirect("/auth/login");
   }
   const user_id = validateSessionResult.user.id;
+
   const comments = await db
     .select({
-      name: count(),
       comments: count(commentTable),
       title: blogTable.title,
     })
     .from(blogTable)
-    .innerJoin(commentTable, eq(commentTable.blogId, blogTable.id))
     .where(eq(blogTable.creatorId, user_id))
+    .innerJoin(commentTable, eq(commentTable.blogId, blogTable.id))
     .groupBy(blogTable.title);
   const bookmarks = await db
     .select({

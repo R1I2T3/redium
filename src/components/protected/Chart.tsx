@@ -21,7 +21,7 @@ export const Chart = ({ data, type }: ChartProps) => {
     <ResponsiveContainer width={"100%"} height={"100%"}>
       <LineChart data={data}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name">
+        <XAxis>
           <Label value="Blogs" offset={0} position="insideBottom" />
         </XAxis>
         <YAxis
